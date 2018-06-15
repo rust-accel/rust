@@ -208,6 +208,11 @@ impl<'a, 'tcx> Visitor<'tcx> for CheckCrateVisitor<'a, 'tcx> {
 
         self.visit_body(body);
 
+        if self.promotable {
+            let body_hir_id = tcx.hir.node_to_hir_id(body_id.node_id);
+            assert!(!self.result.insert(body_hir_id.local_id));
+        }
+
         self.in_fn = outer_in_fn;
         self.tables = outer_tables;
         self.param_env = outer_param_env;
@@ -361,17 +366,14 @@ fn check_expr<'a, 'tcx>(v: &mut CheckCrateVisitor<'a, 'tcx>, e: &hir::Expr, node
 
                 Def::Const(did) |
                 Def::AssociatedConst(did) => {
-                    let promotable = if v.tcx.trait_of_item(did).is_some() {
+                    if v.tcx.trait_of_item(did).is_some() {
                         // Don't peek inside trait associated constants.
-                        false
+                        v.promotable = false;
                     } else {
-                        v.tcx.at(e.span).const_is_rvalue_promotable_to_static(did)
-                    };
-
-                    // Just in case the type is more specific than the definition,
-                    // e.g. impl associated const with type parameters, check it.
-                    // Also, trait associated consts are relaxed by this.
-                    v.promotable &= promotable || v.type_has_only_promotable_values(node_ty);
+                        // Just in case the type is more specific than the definition,
+                        // e.g. impl associated const with type parameters, check it.
+                        v.promotable &= v.tcx.at(e.span).const_is_rvalue_promotable_to_static(did);
+                    }
                 }
 
                 _ => {

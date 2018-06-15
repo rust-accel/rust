@@ -566,12 +566,10 @@ impl<'a, 'tcx> Visitor<'tcx> for Qualifier<'a, 'tcx, 'tcx> {
 
                         ProjectionElem::Field(..) |
                         ProjectionElem::Index(_) => {
-                            if this.mode == Mode::Fn {
-                                let base_ty = proj.base.ty(this.mir, this.tcx).to_ty(this.tcx);
-                                if let Some(def) = base_ty.ty_adt_def() {
-                                    if def.is_union() {
-                                        this.not_const();
-                                    }
+                            let base_ty = proj.base.ty(this.mir, this.tcx).to_ty(this.tcx);
+                            if let Some(def) = base_ty.ty_adt_def() {
+                                if def.is_union() {
+                                    this.add(Qualif::NOT_PROMOTABLE);
                                 }
                             } else if this.qualif.intersects(Qualif::STATIC) {
                                 span_err!(this.tcx.sess, this.span, E0494,
@@ -615,6 +613,7 @@ impl<'a, 'tcx> Visitor<'tcx> for Qualifier<'a, 'tcx, 'tcx> {
                 } = constant.literal {
                     // Don't peek inside trait associated constants.
                     if self.tcx.trait_of_item(def_id).is_some() {
+                        self.add(Qualif::NOT_PROMOTABLE);
                         self.add_type(ty);
                     } else {
                         let (bits, _) = self.tcx.at(constant.span).mir_const_qualif(def_id);

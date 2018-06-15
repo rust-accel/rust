@@ -10,28 +10,17 @@
 
 #![allow(const_err)]
 
-trait Foo {
-    const AMT: usize;
+union Bad {
+    usize: usize,
+    ptr: &'static u32,
 }
 
-enum Bar<A, B> {
-    First(A),
-    Second(B),
-}
+const FOO: usize = unsafe {
+    Bad { ptr: &1 }.usize
+};
 
-impl<A: Foo, B: Foo> Foo for Bar<A, B> {
-    const AMT: usize = [A::AMT][(A::AMT > B::AMT) as usize]; //~ ERROR E0080
-    //~^ ERROR E0080
-}
-
-impl Foo for u8 {
-    const AMT: usize = 1;
-}
-
-impl Foo for u16 {
-    const AMT: usize = 2;
-}
 
 fn main() {
-    println!("{}", <Bar<u16, u8> as Foo>::AMT);
+    let x: &'static usize = &FOO; //~ ERROR does not live long enough
+    let y: &'static usize = &(FOO % 42); //~ ERROR does not live long enough
 }
