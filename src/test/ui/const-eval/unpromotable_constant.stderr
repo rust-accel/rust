@@ -1,0 +1,24 @@
+error[E0597]: borrowed value does not live long enough
+  --> $DIR/unpromotable_constant.rs:24:30
+   |
+LL |     let x: &'static usize = &FOO; //~ ERROR does not live long enough
+   |                              ^^^ temporary value does not live long enough
+LL |     let y: &'static usize = &(FOO % 42); //~ ERROR does not live long enough
+LL | }
+   | - temporary value only lives until here
+   |
+   = note: borrowed value must be valid for the static lifetime...
+
+error[E0597]: borrowed value does not live long enough
+  --> $DIR/unpromotable_constant.rs:25:30
+   |
+LL |     let y: &'static usize = &(FOO % 42); //~ ERROR does not live long enough
+   |                              ^^^^^^^^^^ temporary value does not live long enough
+LL | }
+   | - temporary value only lives until here
+   |
+   = note: borrowed value must be valid for the static lifetime...
+
+error: aborting due to 2 previous errors
+
+For more information about this error, try `rustc --explain E0597`.
