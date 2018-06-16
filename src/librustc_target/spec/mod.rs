@@ -393,6 +393,8 @@ supported_targets! {
     ("wasm32-unknown-unknown", wasm32_unknown_unknown),
     ("wasm32-experimental-emscripten", wasm32_experimental_emscripten),
 
+    ("nvptx64-nvidia-cuda", nvptx64_nvidia_cuda),
+
     ("thumbv6m-none-eabi", thumbv6m_none_eabi),
     ("thumbv7m-none-eabi", thumbv7m_none_eabi),
     ("thumbv7em-none-eabi", thumbv7em_none_eabi),
