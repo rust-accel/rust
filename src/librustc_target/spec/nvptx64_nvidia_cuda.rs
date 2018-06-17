@@ -4,18 +4,17 @@ use super::{LinkerFlavor, Target, TargetOptions, PanicStrategy};
 
 pub fn target() -> Result<Target, String> {
     let opts = TargetOptions {
+        cpu: "sm_50".to_string(),
+        linker: None,
         dynamic_linking: true,
         only_cdylib: true,
-
         executables: false,
-
         exe_suffix: ".ptx".to_string(),
         dll_prefix: "".to_string(),
         dll_suffix: ".ptx".to_string(),
-        linker_is_gnu: true,
-
+        singlethread: true,
+        obj_is_bitcode: true,
         panic_strategy: PanicStrategy::Abort,
-
         .. Default::default()
     };
     Ok(Target {
@@ -26,7 +25,7 @@ pub fn target() -> Result<Target, String> {
         target_env: "".to_string(),
         target_os: "cuda".to_string(),
         target_vendor: "nvidia".to_string(),
-        data_layout: "e-i64:64-v16:16-v32:32-n16:32:64".to_string(),
+        data_layout: "e-i64:64-i128:128-v16:16-v32:32-n16:32:64".to_string(),
         arch: "nvptx64".to_string(),
         linker_flavor: LinkerFlavor::Gcc,
         options: opts,
