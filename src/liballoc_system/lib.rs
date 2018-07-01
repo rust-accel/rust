@@ -20,7 +20,7 @@
 #![cfg_attr(not(stage0), feature(nll))]
 #![feature(staged_api)]
 #![feature(rustc_attrs)]
-#![cfg_attr(any(unix, target_os = "cloudabi", target_os = "redox"), feature(libc))]
+#![cfg_attr(any(unix, target_os = "cuda", target_os = "cloudabi", target_os = "redox"), feature(libc))]
 #![rustc_alloc_kind = "lib"]
 
 // The minimum alignment guaranteed by the architecture. This value is used to
@@ -37,6 +37,7 @@ const MIN_ALIGN: usize = 8;
 #[cfg(all(any(target_arch = "x86_64",
               target_arch = "aarch64",
               target_arch = "mips64",
+              target_arch = "nvptx64",
               target_arch = "s390x",
               target_arch = "sparc64")))]
 #[allow(dead_code)]
@@ -356,4 +357,26 @@ mod platform {
             DLMALLOC.realloc(ptr, layout.size(), layout.align(), new_size)
         }
     }
+}
+
+#[cfg(target_os = "cuda")]
+mod platform {
+    extern crate libc;
+
+    use core::alloc::{GlobalAlloc, Layout};
+    use System;
+
+    #[stable(feature = "alloc_system_type", since = "1.28.0")]
+    unsafe impl GlobalAlloc for System {
+        #[inline]
+        unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+            libc::malloc(layout.size()) as _
+        }
+
+        #[inline]
+        unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
+            libc::free(ptr as *mut libc::c_void);
+        }
+    }
+
 }
