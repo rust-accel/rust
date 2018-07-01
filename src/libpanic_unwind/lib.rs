@@ -86,6 +86,10 @@ mod imp;
 #[path = "wasm32.rs"]
 mod imp;
 
+#[cfg(target_os = "cuda")]
+#[path = "cuda.rs"]
+mod imp;
+
 mod dwarf;
 mod windows;
 

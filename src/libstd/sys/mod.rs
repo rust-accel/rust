@@ -48,6 +48,9 @@ cfg_if! {
     } else if #[cfg(target_arch = "wasm32")] {
         mod wasm;
         pub use self::wasm::*;
+    } else if #[cfg(target_os = "cuda")] {
+        mod wasm;  // FIXME Use same one
+        pub use self::wasm::*;
     } else {
         compile_error!("libstd doesn't compile for this platform yet");
     }
