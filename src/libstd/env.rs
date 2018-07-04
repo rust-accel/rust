@@ -973,6 +973,11 @@ mod arch {
     pub const ARCH: &'static str = "wasm32";
 }
 
+#[cfg(target_arch = "nvptx64")]
+mod arch {
+    pub const ARCH: &'static str = "nvptx64";
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
