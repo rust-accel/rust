@@ -71,6 +71,12 @@ impl LinkerInfo {
                 }) as Box<Linker>
             }
 
+            LinkerFlavor::LlvmLink => {
+                Box::new(LlvmLink {
+                    cmd,
+                }) as Box<Linker>
+            }
+
             LinkerFlavor::Lld(LldFlavor::Ld) |
             LinkerFlavor::Lld(LldFlavor::Ld64) |
             LinkerFlavor::Ld => {
@@ -1022,6 +1028,117 @@ impl Linker for WasmLd {
         // For now we just never have an entry symbol
         self.cmd.arg("--no-entry");
 
+        let mut cmd = Command::new("");
+        ::std::mem::swap(&mut cmd, &mut self.cmd);
+        cmd
+    }
+
+    // Not needed for now with LLD
+    fn group_start(&mut self) {}
+    fn group_end(&mut self) {}
+
+    fn cross_lang_lto(&mut self) {
+        // Do nothing for now
+    }
+}
+
+/// Linker based on `llvm-link` command.
+/// This links compiled binary as LLVM bitcodes.
+pub struct LlvmLink {
+    cmd: Command,
+}
+
+impl Linker for LlvmLink {
+    fn link_dylib(&mut self, lib: &str) {
+        self.cmd.arg(lib);
+    }
+
+    fn link_staticlib(&mut self, lib: &str) {
+        self.cmd.arg(lib);
+    }
+
+    fn link_rlib(&mut self, lib: &Path) {
+        self.cmd.arg(lib);
+    }
+
+    fn include_path(&mut self, _path: &Path) {
+    }
+
+    fn framework_path(&mut self, _path: &Path) {
+        panic!("frameworks not supported")
+    }
+
+    fn output_filename(&mut self, path: &Path) {
+        self.cmd.arg("-o").arg(path);
+    }
+
+    fn add_object(&mut self, path: &Path) {
+        self.cmd.arg(path);
+    }
+
+    fn position_independent_executable(&mut self) {
+    }
+
+    fn full_relro(&mut self) {
+    }
+
+    fn partial_relro(&mut self) {
+    }
+
+    fn no_relro(&mut self) {
+    }
+
+    fn build_static_executable(&mut self) {
+    }
+
+    fn args(&mut self, args: &[String]) {
+        self.cmd.args(args);
+    }
+
+    fn link_rust_dylib(&mut self, lib: &str, _path: &Path) {
+        self.cmd.arg(lib);
+    }
+
+    fn link_framework(&mut self, _framework: &str) {
+        panic!("frameworks not supported")
+    }
+
+    fn link_whole_staticlib(&mut self, lib: &str, _search_path: &[PathBuf]) {
+        self.cmd.arg(lib);
+    }
+
+    fn link_whole_rlib(&mut self, lib: &Path) {
+        self.cmd.arg(lib);
+    }
+
+    fn gc_sections(&mut self, _keep_metadata: bool) {
+    }
+
+    fn optimize(&mut self) {
+    }
+
+    fn pgo_gen(&mut self) {
+    }
+
+    fn debuginfo(&mut self) {
+    }
+
+    fn no_default_libraries(&mut self) {
+    }
+
+    fn build_dylib(&mut self, _out_filename: &Path) {
+    }
+
+    fn export_symbols(&mut self, _tmpdir: &Path, _crate_type: CrateType) {
+    }
+
+    fn subsystem(&mut self, _subsystem: &str) {
+    }
+
+    fn no_position_independent_executable(&mut self) {
+    }
+
+    fn finalize(&mut self) -> Command {
         let mut cmd = Command::new("");
         ::std::mem::swap(&mut cmd, &mut self.cmd);
         cmd
