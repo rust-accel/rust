@@ -48,6 +48,9 @@ cfg_if! {
     } else if #[cfg(target_arch = "wasm32")] {
         mod wasm;
         pub use self::wasm::*;
+    } else if #[cfg(target_os = "cuda")] {
+        mod wasm;  // FIXME Use same one
+        pub use self::wasm::*;
     } else {
         compile_error!("libstd doesn't compile for this platform yet");
     }
@@ -62,7 +65,7 @@ cfg_if! {
     if #[cfg(any(unix, target_os = "redox"))] {
         // On unix we'll document what's already available
         pub use self::ext as unix_ext;
-    } else if #[cfg(any(target_os = "cloudabi", target_arch = "wasm32"))] {
+    } else if #[cfg(any(target_os = "cloudabi", target_os = "cuda", target_arch = "wasm32"))] {
         // On CloudABI and wasm right now the module below doesn't compile
         // (missing things in `libc` which is empty) so just omit everything
         // with an empty module
@@ -81,7 +84,7 @@ cfg_if! {
     if #[cfg(windows)] {
         // On windows we'll just be documenting what's already available
         pub use self::ext as windows_ext;
-    } else if #[cfg(any(target_os = "cloudabi", target_arch = "wasm32"))] {
+    } else if #[cfg(any(target_os = "cloudabi", target_os = "cuda", target_arch = "wasm32"))] {
         // On CloudABI and wasm right now the shim below doesn't compile, so
         // just omit it
         #[unstable(issue = "0", feature = "std_internals")]
