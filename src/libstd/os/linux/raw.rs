@@ -36,6 +36,7 @@ pub use self::arch::{off_t, ino_t, nlink_t, blksize_t, blkcnt_t, stat, time_t};
           target_arch = "powerpc",
           target_arch = "arm",
           target_arch = "asmjs",
+          target_arch = "nvptx64",
           target_arch = "wasm32"))]
 mod arch {
     use os::raw::{c_long, c_short, c_uint};
