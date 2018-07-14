@@ -1049,16 +1049,16 @@ pub struct LlvmLink {
 }
 
 impl Linker for LlvmLink {
-    fn link_dylib(&mut self, lib: &str) {
-        self.cmd.arg(lib);
+    fn link_dylib(&mut self, _lib: &str) {
+        panic!("dylib not supported")
     }
 
-    fn link_staticlib(&mut self, lib: &str) {
-        self.cmd.arg(lib);
+    fn link_staticlib(&mut self, _lib: &str) {
+        panic!("staticlib not supported")
     }
 
-    fn link_rlib(&mut self, lib: &Path) {
-        self.cmd.arg(lib);
+    fn link_rlib(&mut self, _lib: &Path) {
+        panic!("rlib not supported")
     }
 
     fn include_path(&mut self, _path: &Path) {
@@ -1095,20 +1095,20 @@ impl Linker for LlvmLink {
         self.cmd.args(args);
     }
 
-    fn link_rust_dylib(&mut self, lib: &str, _path: &Path) {
-        self.cmd.arg(lib);
+    fn link_rust_dylib(&mut self, _lib: &str, _path: &Path) {
+        panic!("rust_dylib not supported")
     }
 
     fn link_framework(&mut self, _framework: &str) {
         panic!("frameworks not supported")
     }
 
-    fn link_whole_staticlib(&mut self, lib: &str, _search_path: &[PathBuf]) {
-        self.cmd.arg(lib);
+    fn link_whole_staticlib(&mut self, _lib: &str, _search_path: &[PathBuf]) {
+        panic!("whole staticlib not supported")
     }
 
-    fn link_whole_rlib(&mut self, lib: &Path) {
-        self.cmd.arg(lib);
+    fn link_whole_rlib(&mut self, _lib: &Path) {
+        panic!("whole rlib not supported")
     }
 
     fn gc_sections(&mut self, _keep_metadata: bool) {
