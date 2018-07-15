@@ -82,6 +82,7 @@ pub enum LinkerFlavor {
     Ld,
     Msvc,
     Lld(LldFlavor),
+    LlvmLink,
 }
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Hash,
@@ -131,6 +132,7 @@ flavor_mappings! {
     ((LinkerFlavor::Lld(LldFlavor::Ld64)), "ld64.lld"),
     ((LinkerFlavor::Lld(LldFlavor::Ld)), "ld.lld"),
     ((LinkerFlavor::Lld(LldFlavor::Link)), "lld-link"),
+    ((LinkerFlavor::LlvmLink), "llvm-link"),
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Hash, RustcEncodable, RustcDecodable)]
