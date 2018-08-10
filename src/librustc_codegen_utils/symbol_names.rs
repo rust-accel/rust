@@ -416,7 +416,7 @@ pub fn sanitize(result: &mut String, s: &str) -> bool {
 
             // '.' doesn't occur in types and functions, so reuse it
             // for ':' and '-'
-            '-' | ':' => result.push('.'),
+            '-' | ':' => result.push('_'),
 
             // These are legal symbols
             'a'..='z' | 'A'..='Z' | '0'..='9' | '_' | '.' | '$' => result.push(c),
