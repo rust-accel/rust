@@ -1,11 +1,10 @@
 /// Copied from wasm32-unknown-unknown
-
-use super::{LinkerFlavor, Target, TargetOptions, PanicStrategy};
+use super::{LinkerFlavor, PanicStrategy, Target, TargetOptions};
 
 pub fn target() -> Result<Target, String> {
     let opts = TargetOptions {
         cpu: "sm_50".to_string(),
-        linker: None,
+        linker: Some("ptx-linker".into()),
         dynamic_linking: true,
         only_cdylib: true,
         executables: false,
@@ -15,7 +14,7 @@ pub fn target() -> Result<Target, String> {
         singlethread: true,
         obj_is_bitcode: true,
         panic_strategy: PanicStrategy::Abort,
-        .. Default::default()
+        ..Default::default()
     };
     Ok(Target {
         llvm_target: "nvptx64-nvidia-cuda".to_string(),
@@ -31,4 +30,3 @@ pub fn target() -> Result<Target, String> {
         options: opts,
     })
 }
-
